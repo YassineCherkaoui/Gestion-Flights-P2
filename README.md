@@ -19,6 +19,6 @@ statut : "User" si client normal et "Admin" si c'est admin.
 
 ## Install requirment and guide:
 * Any php server for windows (WAMP, XAMPP or WampServer) for mac (MAMP) ond for linux (LAMP)
-* lunch your live server and read the documentaion of one of those softwares where is the public folder and past all the flies for this repository in that public file
+* lunch your live server and read the documentaion of one of those softwares where is the public folder and past all the flies for this repository in that public folder
 * the link usually is http://localhost/
 * is recommanded to learn the basic of phpmyadmin to excute "flights.sql" database script
