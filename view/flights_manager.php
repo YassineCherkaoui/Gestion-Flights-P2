@@ -97,6 +97,7 @@ close_connection();
                 </tr>
             </thead>
             </tbody>
+            <form action="../controller/flight_process.php" method="POST">
             <?php foreach($objects as $flight){ ?>
             <tr>
                 <th><?php echo $flight->get_data()["plane_name"];?></th>
@@ -105,7 +106,7 @@ close_connection();
                 <th><?php echo $flight->get_data()["date_flight"];?></th>
                 <th><?php echo $flight->get_data()["price"];?>DH</th>
                 <th><?php echo $flight->get_data()["total_places"];?></th>
-                <form action="../controller/flight_process.php" method="POST">
+                
                 <?php 
                 if($flight->get_data()["is_active"] == 1){
                 ?>
@@ -114,9 +115,10 @@ close_connection();
                 }else {
                 ?>
                 <th><button type="submit" value="<?php echo $flight->get_id();?>" name="switch" class="btn btn-success btn-sm">Enable</button></th>
-                <?php }} ?>
-                </form>
+                
             </tr>
+            <?php }} ?>
+            </form>
             </tbody>
         </table>
     </div>

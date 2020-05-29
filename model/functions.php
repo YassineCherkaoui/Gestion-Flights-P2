@@ -9,7 +9,7 @@ function open_connetion(){
     global $connection;
     $connection = mysqli_connect("localhost", "root", "", "flightManagmentP2", "3306");
     if(mysqli_connect_errno()){
-        die("Database coonection error: ".mysqli_connect_error() ." (".mysqli_connect_errno().")");
+        die("Database connection error: ".mysqli_connect_error() ." (".mysqli_connect_errno().")");
     }
 }
 

@@ -9,8 +9,8 @@
 
     function __construct(){
         $this->mysqli = new mysqli("localhost", "root", "", "flightManagmentP2", "3306");
-        if ($this->mysqli->connect_error) {
-            die("Connection failed: " . $mysqli->connect_error);
+        if ($this->mysqli->connect_errno) {
+            die("Connection failed: " . $this->mysqli->connect_error);
         }
     }
 
@@ -62,6 +62,8 @@
                 if($result->affected_rows == 1){
                     $this->has_row = false;
                     return true;
+                }else{
+                    return false;
                 }
             }else{
                 die("Error in : " . $query . "<br>" . $this->mysqli->error);
