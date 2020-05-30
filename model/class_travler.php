@@ -9,14 +9,10 @@ class Travler extends Functions{
     private $last_name;
     private $passport;
 
-    function __construct(){
+    function __construct($connection){
         $this->table_name = "Travler";
         $this->id_name = "id_travler";
-        Functions::__construct();
-    }
-
-    function __destruct(){
-        Functions::__destruct();
+        Functions::__construct($connection);
     }
 
     public function get_data(){
@@ -46,25 +42,28 @@ class Travler extends Functions{
             $query .= ") VALUES (";
             $query .= "{$this->id_user}, {$this->id_flight}, {$this->id_resevation}, '{$this->first_name}', '{$this->last_name}', '{$this->passport}')";
 
-            $result = $this->mysqli->query($query);
+            $result = mysqli_query($this->mysqli, $query);
+            
             if($result){
-                $this->id_flight = $this->mysqli->insert_id;
-                $this->has_row = true;
-                return true;
+                if(mysqli_affected_rows($this->mysqli) == 1){
+                    $this->id =  mysqli_insert_id($this->mysqli);
+                    $this->has_row = true;
+                    return true;
+                }
             }else{
-                die("Error in : " . $query . "<br>" . $this->mysqli->error. "<br>Error number: " . $this->mysqli->errno);
+                die("Error in : " . $query . "<br>" . mysqli_error($this->mysqli));
             }
         }else{
-            return $this;
+            return false;
         }
     }
 
     public function create_from_id($id){
         $query = "SELECT * FROM {$this->table_name} WHERE {$this->id_name} = {$id}";
-        $result = $this->mysqli->query($query);
+        $result = mysqli_query($this->mysqli, $query);
         if($result){
-            if($result->num_rows > 0){
-                $row = $result->fetch_assoc();
+            if(mysqli_num_rows($result) > 0){
+                $row = mysqli_fetch_assoc($result);
                 $this->id            = $row["id_travler"];
                 $this->id_user       = $row["id_user"];
                 $this->id_flight     = $row["id_flight"];
@@ -74,13 +73,13 @@ class Travler extends Functions{
                 $this->passport      = $row["passport"];
                 $this->has_row       = true;
 
-                $result->free_result();
+                mysqli_free_result($result);
                 return $this;
             }else{
                 return false;
             }
         }else{
-            die("Error in : " . $query . "<br>" . $this->mysqli->error);
+            die("Error in : " . $query . "<br>" . mysqli_error($this->mysqli));
         }
     }
 }

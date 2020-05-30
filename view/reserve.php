@@ -1,17 +1,18 @@
 <?php 
 require_once("../controller/session_handler.php");
 require_once("../model/functions.php");
-include("../layout/header.php");
+
 
 if(!(isset($_SESSION['id']) && isset($_GET['id']))){
     header("Location: ../view/index.php");
     exit;
 }
-
-$flight = new Flight();
+open_connetion();
+$flight = new Flight($connection);
 $flight->create_from_id((int) $_GET['id']);
-?>
+include("../layout/header.php");
 
+?>
 <div class="container">
 <?php echo message();?>
 
@@ -106,5 +107,6 @@ $flight->create_from_id((int) $_GET['id']);
 
 </div>
 <script src="js/script.js"></script>
+<?php close_connection(); ?>
 </body>
 </html>

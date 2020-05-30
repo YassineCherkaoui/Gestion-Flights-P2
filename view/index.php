@@ -1,8 +1,21 @@
 <?php 
 require_once("../controller/session_handler.php");
-include("../layout/header.php");
 require_once("../model/functions.php");
 open_connetion();
+$objects     = [];
+if(isset($_POST["from"]) && isset($_POST["to"])){
+$issafe      = true;
+$depart      = safe_data($_POST, "from", $issafe);
+$distination = safe_data($_POST, "to", $issafe);
+if($issafe){
+    $objects = get_flights_objects(
+        "WHERE depart = '{$depart}' AND distination = '{$distination}' AND total_places > 0 AND is_active = 1");
+
+    }
+}
+include("../layout/header.php");
+
+
 ?>
 <div class="jumbotron jumbotron-fluid">
     <div class="container">
@@ -41,14 +54,7 @@ open_connetion();
     <?php echo message();?>
     <div class="table-responsive">
         <table class="table flights">
-            <?php
-                $issafe      = true;
-                $depart      = safe_data($_POST, "from", $issafe);
-                $distination = safe_data($_POST, "to", $issafe);
-                $objects     = [];
-                if($issafe){
-                    $objects = get_flights_objects(
-                        "WHERE depart = '{$depart}' AND distination = '{$distination}' AND total_places > 0 AND is_active = 1");
+           <?php
                     if(!empty($objects)){
             ?>
             <thead class="thead-dark">
@@ -63,7 +69,6 @@ open_connetion();
             </thead>
             <?php
             }
-                } 
                 $page = isset($_SESSION['id']) ? "reserve.php" : "sing.php";
             ?>
             </tbody>

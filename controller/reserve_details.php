@@ -3,9 +3,10 @@ require_once("../controller/session_handler.php");
 require_once("../model/functions.php");
 
 if (isset($_REQUEST["id"]) && isset($_SESSION["id"])){
-    $travler = new Travler();
-    $flight = new Flight();
-    $reserve = new Reservation();
+    open_connetion();
+    $travler = new Travler($connection);
+    $flight = new Flight($connection);
+    $reserve = new Reservation($connection);
 
     $travler->create_from_id($_REQUEST["id"]);
     $flight->create_from_id($travler->get_data()["id_flight"]);
@@ -17,5 +18,6 @@ if (isset($_REQUEST["id"]) && isset($_SESSION["id"])){
         "reserve" => $reserve->get_data()
     ];
     echo json_encode($returned_data);
+    close_connection();
 }
 ?>

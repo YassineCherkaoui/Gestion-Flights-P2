@@ -7,15 +7,8 @@
     protected $table_name = null;
     protected $id_name = null;
 
-    function __construct(){
-        $this->mysqli = new mysqli("localhost", "root", "", "flightManagmentP2", "3306");
-        if ($this->mysqli->connect_errno) {
-            die("Connection failed: " . $this->mysqli->connect_error);
-        }
-    }
-
-    function __destruct(){
-        $this->mysqli->close();
+    function __construct($mysqli){
+        $this->mysqli = $mysqli;
     }
 
     public function is_has_row(){
@@ -28,7 +21,7 @@
 
     protected function safe_data($post,$name,&$issafe){
         if(isset($post[$name]) && trim($post[$name]) !== ""){
-            return $this->mysqli->real_escape_string(trim($post[$name]));
+            return mysqli_real_escape_string($this->mysqli,trim($post[$name]));
         }else{
             $issafe = false;
             return null;
@@ -43,31 +36,13 @@
         }
         $query = rtrim($query, ","); //remove the last , from the query
         $query .= " WHERE {$this->id_name} = {$this->id}";
-        $result = $this->mysqli->query($query);
+        $result = mysqli_query($this->mysqli,$query);
         if($result){
-            if($result->affected_rows == 1){
+            if(mysqli_affected_rows($this->mysqli) == 1){
                 return true;
             }
         }else{
-            die("Error in : " . $query . "<br>" . $this->mysqli->error);
-        }
-        return false;
-    }
-
-    public function delete_row(){
-        if($this->has_row){
-            $query = "DELETE from {$this->table_name} WHERE {$this->id_name} = {$this->id}";
-            $result = $this->mysqli->query($query);
-            if($result){
-                if($result->affected_rows == 1){
-                    $this->has_row = false;
-                    return true;
-                }else{
-                    return false;
-                }
-            }else{
-                die("Error in : " . $query . "<br>" . $this->mysqli->error);
-            }
+            die("Error in : " . $query . "<br>" . mysqli_error($this->mysqli));
         }
         return false;
     }

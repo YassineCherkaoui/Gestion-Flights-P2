@@ -2,7 +2,6 @@
 require_once("inheret_functions.php");
 class Flight extends Functions{
 
-    private $id_flight;
     private $plane_name;
     private $depart;
     private $distination;
@@ -11,14 +10,10 @@ class Flight extends Functions{
     private $total_places;
     private $is_active;
 
-    function __construct(){
+    function __construct($connection){
         $this->table_name = "Flight";
         $this->id_name = "id_flight";
-        Functions::__construct();
-    }
-
-    function __destruct(){
-        Functions::__destruct();
+        Functions::__construct($connection);
     }
 
     public function get_data(){
@@ -50,15 +45,15 @@ class Flight extends Functions{
             $query .= ") VALUES (";
             $query .= "'{$this->plane_name}', '{$this->depart}', '{$this->distination}', ";
             $query .= "'{$this->date_flight}', {$this->total_places}, {$this->price}, {$this->is_active})";
-            $result = $this->mysqli->query($query);
+            $result = mysqli_query($this->mysqli, $query);
             if($result){
-                if($result->affected_rows == 1){
-                    $this->id_flight = $this->mysqli->insert_id;
+                if(mysqli_affected_rows($this->mysqli) == 1){
+                    $this->id =  mysqli_insert_id($this->mysqli);
                     $this->has_row = true;
                     return true;
                 }
             }else{
-            die("Error in : " . $query . "<br>" . $this->mysqli->error);
+                die("Error in : " . $query . "<br>" . mysqli_error($this->mysqli));
             }
         }else{
             return false;
@@ -67,10 +62,10 @@ class Flight extends Functions{
 
     public function create_from_id($id){
         $query = "SELECT * FROM {$this->table_name} WHERE {$this->id_name} = {$id}";
-        $result = $this->mysqli->query($query);
+        $result = mysqli_query($this->mysqli, $query);
         if($result){
-            if($result->num_rows > 0){
-                $row = $result->fetch_assoc();
+            if(mysqli_num_rows($result) > 0){
+                $row = mysqli_fetch_assoc($result);
                 $this->id           = $row["id_flight"];
                 $this->plane_name   = $row["plane_name"];
                 $this->depart       = $row["depart"];
@@ -81,13 +76,13 @@ class Flight extends Functions{
                 $this->is_active    = $row["is_active"];
                 $this->has_row      = true;
 
-                $result->free_result();
+                mysqli_free_result($result);
                 return $this;
             }else{
                 return false;
             }
         }else{
-            die("Error in : " . $query . "<br>" . $this->mysqli->error);
+            die("Error in : " . $query . "<br>" . mysqli_error($this->mysqli));
         }
     }
 }

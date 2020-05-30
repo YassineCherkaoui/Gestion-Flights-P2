@@ -8,13 +8,13 @@ if(!isset($_SESSION['id'])){
 }
 include("../layout/header.php");
 open_connetion();
-$user = new User();
+$user = new User($connection);
 $reservations = null;
 $user->create_from_id($_SESSION['id']);
 if(isset($_SESSION['id'])){
   $reservations = get_travlers_objects("WHERE id_user = {$_SESSION['id']} ORDER BY id_travler DESC");
 }
-close_connection();
+
 ?>
 <div class="jumbotron jumbotron-fluid mb-0">
   <div class="container">
@@ -79,8 +79,8 @@ close_connection();
     </thead>
     <tbody>
       <?php foreach($reservations as $reservation){
-      $flight = new Flight();
-      $resere = new Reservation();
+      $flight = new Flight($connection);
+      $resere = new Reservation($connection);
 
       $flight->create_from_id($reservation->get_data()["id_flight"]);
       $resere->create_from_id($reservation->get_data()["id_resevation"]);
@@ -156,6 +156,7 @@ close_connection();
 </div>
 
 <script src="js/script.js"></script>
+<?php close_connection(); ?>
 </body>
 
 </html>

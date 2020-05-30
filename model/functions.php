@@ -19,11 +19,12 @@ function close_connection(){
 }
 
 function get_travlers_objects($where=null){
+    global $connection;
     $objects = [];
     $query = "SELECT id_travler FROM Travler" . (!empty($where) ? " ".$where : "");
     $result = get_rows($query);
     while($row = mysqli_fetch_row($result)){
-        $travler = new Travler();
+        $travler = new Travler($connection);
         $travler->create_from_id($row[0]);
         $objects[] = $travler;
     }
@@ -31,11 +32,12 @@ function get_travlers_objects($where=null){
 }
 
 function get_flights_objects($where=null){
+    global $connection;
     $objects = [];
     $query = "SELECT id_flight FROM Flight" . (!empty($where) ? " ".$where : "");
     $result = get_rows($query);
     while($row = mysqli_fetch_row($result)){
-        $flight = new Flight();
+        $flight = new Flight($connection);
         $flight->create_from_id($row[0]);
         $objects[] = $flight;
     }

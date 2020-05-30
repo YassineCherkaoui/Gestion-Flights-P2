@@ -6,14 +6,10 @@ class Reservation extends Functions{
     private $id_user;
     private $date_resevation;
 
-    function __construct(){
+    function __construct($connection){
         $this->table_name = "Reservation";
         $this->id_name = "id_resevation";
-        Functions::__construct();
-    }
-
-    function __destruct(){
-        Functions::__destruct();
+        Functions::__construct($connection);
     }
 
     public function get_data(){
@@ -36,13 +32,15 @@ class Reservation extends Functions{
             $query .= ") VALUES (";
             $query .= "{$this->id_flight}, {$this->id_user})";
 
-            $result = $this->mysqli->query($query);
+            $result = mysqli_query($this->mysqli, $query);
             if($result){
-                $this->id = $this->mysqli->insert_id;
-                $this->has_row = true;
-                return true;
+                if(mysqli_affected_rows($this->mysqli) == 1){
+                    $this->id =  mysqli_insert_id($this->mysqli);
+                    $this->has_row = true;
+                    return true;
+                }
             }else{
-                die("Error in : " . $query . "<br>" . $this->mysqli->error);
+                die("Error in : " . $query . "<br>" . mysqli_error($this->mysqli));
             }
         }else{
             return false;
@@ -51,23 +49,23 @@ class Reservation extends Functions{
 
     public function create_from_id($id){
         $query = "SELECT * FROM {$this->table_name} WHERE {$this->id_name} = {$id}";
-        $result = $this->mysqli->query($query);
+        $result = mysqli_query($this->mysqli, $query);
         if($result){
-            if($result->num_rows > 0){
-                $row = $result->fetch_assoc();
+            if(mysqli_num_rows($result) > 0){
+                $row = mysqli_fetch_assoc($result);
                 $this->id               = $row["id_resevation"];
                 $this->id_flight        = $row["id_flight"];
                 $this->id_user          = $row["id_user"];
                 $this->date_resevation  = $row["date_resevation"]; 
                 $this->has_row          = true;
 
-                $result->free_result();
+                mysqli_free_result($result);
                 return $this;
             }else{
                 return false;
             }
         }else{
-            die("Error in : " . $query . "<br>" . $this->mysqli->error);
+            die("Error in : " . $query . "<br>" . mysqli_error($this->mysqli));
         }
     }
 }
